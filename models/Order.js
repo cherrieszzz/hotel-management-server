@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
+  username: {
+    type: String,
     ref: 'User',
     required: true,
   },
@@ -14,6 +14,11 @@ const orderSchema = new mongoose.Schema({
   state: {
     type: String,
     enum: ['valid','invalid'],
+    required: true,
+  },
+  makeData:{
+    type:Date,
+    required:true
   },
   checkInDate: {
     type: Date,
@@ -31,6 +36,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: ['standard', 'double'],
     required: true,
+  },
+  roomNum:{
+    type:Number,
+    required:true,
   },
   paymentStatus: {
     type: Boolean,

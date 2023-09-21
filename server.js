@@ -4,6 +4,8 @@ const authRouter = require('./routes/auth');
 const hotelRouter = require('./routes/hotels');
 const roomRouter = require('./routes/rooms');
 const meRouter = require('./routes/me');
+const orderRouter = require('./routes/orders');
+const userRouter = require('./routes/users');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require('dotenv').config();
@@ -17,6 +19,8 @@ app.use('/auth', authRouter);
 app.use('/hotels', hotelRouter);
 app.use('/rooms', roomRouter);
 app.use('/me', meRouter);
+app.use('/orders', orderRouter);
+app.use('/users', userRouter);
 
 mongoose.connect(DB_URL, {
   useNewUrlParser: true,

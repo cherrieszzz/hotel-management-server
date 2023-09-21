@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Hotel = require('../../models/Hotel');
+const isAdminMiddleware = require('../../middlewares/isAdminMiddleware');
 
 router.get('/', async function(req, res) {
     try {
@@ -33,7 +34,7 @@ router.get('/:_id', async (req, res) => {
     }
 })
 
-router.post('/new', async (req, res) => {
+router.post('/', isAdminMiddleware, async (req, res) => {
     try {
         const newHotel = {
             name:req.body.name,
@@ -41,7 +42,8 @@ router.post('/new', async (req, res) => {
             address:req.body.address,
             starRating:req.body.starRating,
             isOpen:req.body.isOpen,
-            rooms:req.body.rooms
+            rooms:req.body.rooms,
+            image:req.body.image
         }
         console.log(newHotel);
         await Hotel.create(newHotel);
@@ -53,7 +55,7 @@ router.post('/new', async (req, res) => {
     }
 })
 
-router.put('/:_id', async (req, res) => {
+router.put('/:_id', isAdminMiddleware,async (req, res) => {
     try {
             const updateHotel = {
                 name:req.body.name,
@@ -61,7 +63,8 @@ router.put('/:_id', async (req, res) => {
                 address:req.body.address,
                 starRating:req.body.starRating,
                 isOpen:req.body.isOpen,
-                rooms:req.body.rooms
+                rooms:req.body.rooms,
+                image:req.body.image
             }
             const resDoc = await Hotel.findByIdAndUpdate(req.params._id, updateHotel);
             res.send(resDoc);
@@ -70,7 +73,7 @@ router.put('/:_id', async (req, res) => {
     }
 })
 
-router.delete('/:_id', async (req, res) => {
+router.delete('/:_id',isAdminMiddleware, async (req, res) => {
     try {
          await Hotel.findByIdAndDelete(req.params._id);
          res.send({

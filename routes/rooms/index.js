@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Hotel = require('../../models/Hotel');
+const isAdminMiddleware = require('../../middlewares/isAdminMiddleware');
 
 router.get('/:hotelId', async (req, res) => {
     const hotelId = req.params.hotelId; // 从URL参数中获取酒店ID
@@ -31,7 +32,7 @@ router.get('/:hotelId', async (req, res) => {
 });
 
 // POST请求用于添加新的房间
-router.post('/:hotelId/add-room', async (req, res) => {
+router.post('/:hotelId/add-room', isAdminMiddleware, async (req, res) => {
     const hotelId = req.params.hotelId; // 从URL参数中获取酒店ID
     const newRoomData = req.body; // 从请求体中获取新房间的数据
 
@@ -54,5 +55,34 @@ router.post('/:hotelId/add-room', async (req, res) => {
     }
 });
 
+router.delete('/:hotelId/room/:roomId', isAdminMiddleware, async (req, res) => {
+    try {
+        const hotelId = req.params.hotelId;
+        const roomId = req.params.roomId;
 
+        // 使用 Mongoose 找到指定酒店
+        const hotel = await Hotel.findById(hotelId);
+
+        if (!hotel) {
+            return res.status(404).json({ message: '酒店未找到' });
+        }
+
+        // 使用 Mongoose 删除指定的房间
+        const room = hotel.rooms.id(roomId);
+
+        if (!room) {
+            return res.status(404).json({ message: '房间未找到' });
+        }
+
+        room.remove();
+
+        // 保存更新后的酒店信息
+        await hotel.save();
+
+        return res.json({ message: '房间删除成功' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: '服务器错误' });
+    }
+})
 module.exports = router;

@@ -15,6 +15,13 @@ router.post('/login', async (req, res) => {
                 message: "用户名或密码错误"
             })
         }
+        if(username === 'admin') {
+            console.log("admin comming!")
+            const token = jwt.sign({username: username, auth: 'admin'}, process.env.JWT_KEY);
+            return res.send({
+                token, user
+            });
+        }
         const token = jwt.sign({username: username, auth: 'user'}, process.env.JWT_KEY);
         return res.send({
             token, user
@@ -30,7 +37,6 @@ router.post('/sign', async (req, res) => {
         const newUser = req.body;
         console.log(newUser)
         const existingUser = await User.findOne({$or: [{username: newUser.username}, {email: newUser.email}]});
-        console.log(existingUser);
         if (existingUser) {
             return res.send({
                 message: "此用户名或邮箱已经注册"
@@ -50,10 +56,6 @@ router.post('/sign', async (req, res) => {
             message: "server error"
         })
     }
-})
-
-router.post('/adminlogin', async (req, res) => {
-
 })
 
 module.exports = router;
